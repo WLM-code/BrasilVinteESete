@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brasil Aftelkalender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: neon baile-funk flyer. Marquee on top, giant countdown, one big card for the chosen day, song poster, then a sticker grid of all 56 days. */
+:root {
+  --ink: #12041f;
+  --paper: #1d0a38;
+  --card: #2a1250;
+  --pink: #ff2d95;
+  --yellow: #ffe600;
+  --green: #00d26a;
+  --blue: #2f6bff;
+  --orange: #ff7a1a;
+  --text: #fff6e8;
+  --muted: #c9b6ea;
+  --font-display: "Bungee", "Impact", sans-serif;
+  --font-body: "Rubik", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--ink);
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,45,149,.22) 1.5px, transparent 1.6px);
+  background-size: 18px 18px;
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.45;
+  overflow-x: hidden;
+}
+a { color: var(--yellow); }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+.ticker { background: var(--yellow); color: var(--ink); overflow: hidden; white-space: nowrap; border-bottom: 4px solid var(--ink); }
+.ticker-track { display: inline-block; padding: 8px 0; font-family: var(--font-display); font-size: 15px; letter-spacing: .06em; animation: slide 28s linear infinite; }
+.ticker-track span { margin: 0 14px; }
+@keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+header.hero { padding: 28px 0 8px; display: grid; gap: 18px; }
+.kicker { font-family: var(--font-display); color: var(--pink); font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+h1 { font-family: var(--font-display); font-weight: 400; margin: 0; font-size: clamp(44px, 12vw, 120px); line-height: .95; text-wrap: balance; text-transform: uppercase; }
+h1 .g { color: var(--green); } h1 .y { color: var(--yellow); } h1 .b { color: var(--blue); text-shadow: 3px 3px 0 var(--pink); }
+
+.count { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.count-num { font-family: var(--font-display); font-size: clamp(90px, 26vw, 220px); line-height: .85; color: var(--ink); background: var(--yellow); padding: 8px 22px 14px; transform: rotate(-3deg); box-shadow: 8px 8px 0 var(--pink); font-variant-numeric: tabular-nums; }
+.count-label { font-family: var(--font-display); font-size: clamp(20px, 4vw, 34px); text-transform: uppercase; max-width: 14ch; line-height: 1.05; }
+.count-label small { display: block; font-family: var(--font-body); font-weight: 500; text-transform: none; font-size: 15px; color: var(--muted); margin-top: 6px; }
+
+.bar { display: grid; grid-template-columns: repeat(56, 1fr); gap: 2px; margin-top: 6px; }
+.bar i { height: 14px; background: var(--card); display: block; }
+.bar i.on { background: var(--green); }
+.bar i.now { background: var(--pink); }
+
+section { margin-top: 36px; }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 5vw, 40px); margin: 0 0 14px; text-transform: uppercase; text-wrap: balance; }
+h2 .tag { background: var(--pink); color: var(--ink); padding: 2px 10px; display: inline-block; transform: rotate(-2deg); }
+
+.day { display: grid; grid-template-columns: minmax(150px, 260px) 1fr; gap: 22px; background: var(--card); border: 4px solid var(--text); box-shadow: 10px 10px 0 var(--blue); padding: 22px; }
+.sticker { width: 100%; max-width: 260px; aspect-ratio: 1; padding: 10px; background: var(--b-bg, var(--pink)); transform: rotate(-4deg); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--yellow); align-self: start; }
+.sticker svg { width: 100%; height: 100%; display: block; }
+.day-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.chip { font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; background: var(--green); color: var(--ink); padding: 4px 10px; text-transform: uppercase; }
+.chip.alt { background: var(--text); }
+.word { font-family: var(--font-display); font-size: clamp(36px, 8vw, 72px); line-height: 1; margin: 4px 0; color: var(--yellow); text-wrap: balance; overflow-wrap: anywhere; }
+.nl { font-size: 22px; font-weight: 700; }
+.say { color: var(--muted); font-size: 15px; margin-top: 2px; }
+.boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+.box { border: 3px solid var(--text); padding: 12px 14px; background: var(--paper); }
+.box h3 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 400; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--pink); }
+.box.fest h3 { color: var(--orange); }
+.box p { margin: 0; font-size: 17px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+button, .btn { font-family: var(--font-display); font-size: 15px; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; border: 3px solid var(--ink); background: var(--yellow); color: var(--ink); padding: 10px 16px; box-shadow: 4px 4px 0 var(--pink); text-decoration: none; display: inline-block; }
+button:hover, .btn:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--pink); }
+button.done { background: var(--green); }
+button.ghost { background: transparent; color: var(--text); border-color: var(--text); box-shadow: none; }
+.locked { text-align: center; padding: 30px 10px; }
+.locked .word { color: var(--pink); }
+
+.song { background: var(--pink); color: var(--ink); border: 4px solid var(--text); box-shadow: 10px 10px 0 var(--yellow); padding: 22px; display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; transform: rotate(-.6deg); }
+.song h2 { margin: 0 0 6px; }
+.song h2 .tag { background: var(--ink); color: var(--yellow); }
+.song .title { font-family: var(--font-display); font-size: clamp(28px, 6vw, 52px); line-height: 1; margin: 6px 0; text-wrap: balance; }
+.song .artist { font-weight: 800; font-size: 18px; }
+.song p { margin: 8px 0 0; max-width: 56ch; font-weight: 500; }
+.song .btn { background: var(--ink); color: var(--yellow); border-color: var(--ink); box-shadow: 4px 4px 0 var(--yellow); }
+.song .btn.alt { background: var(--yellow); color: var(--ink); }
+.song-actions { display: grid; gap: 10px; }
+.more { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.more span { background: var(--ink); color: var(--text); padding: 4px 10px; font-weight: 700; font-size: 14px; }
+.fine { font-size: 13px; color: var(--ink); opacity: .8; margin-top: 10px !important; }
+
+.gridhead { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+label.sw { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; }
+label.sw input { width: 20px; height: 20px; accent-color: var(--pink); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 12px; margin-top: 10px; }
+.tile { position: relative; background: var(--card); border: 3px solid var(--text); padding: 8px 8px 10px; text-align: left; color: var(--text); font-family: var(--font-body); text-transform: none; letter-spacing: 0; box-shadow: 4px 4px 0 var(--blue); cursor: pointer; }
+.tile:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--blue); }
+.tile .n { font-family: var(--font-display); font-size: 34px; line-height: 1; color: var(--yellow); }
+.tile .d { font-size: 12px; color: var(--muted); font-weight: 500; }
+.tile .w { font-weight: 800; font-size: 14px; margin-top: 4px; overflow-wrap: anywhere; min-height: 2.6em; }
+.tile .mini { width: 46px; height: 46px; position: absolute; right: 6px; top: 6px; }
+.tile .mini svg { width: 100%; height: 100%; display: block; }
+.tile.past { opacity: .6; border-style: dashed; box-shadow: none; }
+.tile.past.ok { opacity: 1; border-style: solid; background: #0f3a2a; box-shadow: 4px 4px 0 var(--green); }
+.tile.today { border-color: var(--yellow); box-shadow: 0 0 0 4px var(--pink), 6px 6px 0 4px var(--yellow); animation: pulse 1.6s ease-in-out infinite; }
+.tile.future { background: var(--paper); box-shadow: none; }
+.tile.future .w { color: var(--muted); }
+.tile.sel { outline: 4px solid var(--pink); outline-offset: 2px; }
+.stamp { position: absolute; left: 8px; bottom: 6px; font-family: var(--font-display); font-size: 11px; background: var(--green); color: var(--ink); padding: 1px 6px; transform: rotate(-6deg); }
+@keyframes pulse { 50% { transform: scale(1.03); } }
+
+footer { margin: 50px 0 40px; color: var(--muted); font-size: 14px; }
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+@media (max-width: 720px) {
+  .day { grid-template-columns: 1fr; padding: 16px; }
+  .sticker { max-width: 180px; }
+  .boxes { grid-template-columns: 1fr; }
+  .song { grid-template-columns: 1fr; transform: none; }
+  .bar i { height: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .tile.today { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kicker">Aftellen tot 11 januari 2027</div>
+    <h1><span class="g">Bra</span><span class="y">sil</span> <span class="b">baile</span></h1>
+    <div class="count">
+      <div class="count-num" id="countNum" aria-live="polite">55</div>
+      <div class="count-label" id="countLabel">dagen te gaan<small id="countSub"></small></div>
+    </div>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+  </header>
+
+  <section aria-labelledby="dayTitle">
+    <h2 id="dayTitle"><span class="tag" id="dayTag">Vandaag</span></h2>
+    <div class="day" id="day"></div>
+  </section>
+
+  <section aria-labelledby="songTitle">
+    <div class="song">
+      <div>
+        <h2 id="songTitle"><span class="tag">Net uit</span></h2>
+        <div class="title">Sensualiza e Desce</div>
+        <div class="artist">MC Mari, Pocah &amp; Lexa</div>
+        <p>Een nieuwe funk-popsingle uit oktober 2026 met clip. Perfect om op te warmen: lekker bounce, veel heupwerk, en Portugese woorden die je hier meteen herkent.</p>
+        <div class="more" aria-label="Meer funk om te draaien">
+          <span>Doce: DJ Topo &amp; MC Lina</span>
+          <span>Flexão Labial: Kevin O Chris</span>
+          <span>Bonde do Brunão: Bruno Mars</span>
+        </div>
+        <p class="fine">Gevonden via Billboard Brasil. Ik heb geen live hitlijst kunnen controleren, dus dit is een verse funk-tip en geen bewezen nummer 1.</p>
+      </div>
+      <div class="song-actions">
+        <a class="btn alt" href="https://www.youtube.com/results?search_query=MC+Mari+Pocah+Lexa+Sensualiza+e+Desce" target="_blank" rel="noopener">Kijk op YouTube</a>
+        <a class="btn" href="https://open.spotify.com/search/Sensualiza%20e%20Desce%20MC%20Mari" target="_blank" rel="noopener">Zoek op Spotify</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="gridTitle">
+    <div class="gridhead">
+      <h2 id="gridTitle"><span class="tag">Alle dagen</span></h2>
+      <label class="sw" for="spoil"><input type="checkbox" id="spoil"> Kijk vooruit</label>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <footer>Elke dag een Portugees woord, een voorbereidingstip en een carnavalsmoment. Check altijd zelf de officiële reisregels en vaccinatie-eisen voor je vertrek.</footer>
+</div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  var TOTAL = 55;
+  var TARGET = new Date(2027, 0, 11);
+
+  /* N = dagen tot 11 januari, van 55 tot 0.
+     [portugees, nederlands, uitspraak, voorbereidingstip, carnavalsmoment] */
+  var DATA = [
+["Oi","hoi","oi","Controleer je paspoort: geldig en niet bijna verlopen.","Trek vandaag iets geels, groens of blauws aan."],
+["Obrigado / Obrigada","dank je (man / vrouw)","oh-bree-GAH-doe / -da","Lees het actuele reisadvies op nederlandwereldwijd.nl.","Zet 'Funk Rave' van Anitta op en bounce een minuut."],
+["Por favor","alsjeblieft","poor fa-VOR","Plan een afspraak voor reisvaccinaties en vraag welke bij jouw route horen.","Zeg vandaag één keer 'obrigado' en lach erbij."],
+["Bom dia","goedemorgen","bom DJEE-a","Check of je reis- en annuleringsverzekering klopt.","Start je dag met een Braziliaans nummer."],
+["Boa noite","goedenavond","BO-a NOI-tsje","Maak een foto van je paspoort en mail die naar jezelf.","Doe het licht uit, zet muziek aan en dans solo."],
+["Tudo bem?","alles goed?","TOE-doe bem","Download offline kaarten van je bestemming.","Maak een playlist met 5 nummers: je baile-warming-up."],
+["Água","water","AH-gwa","Zoek op wat het weer in januari is: het is zomer, met tropische buien.","Drink water met ijs en limoen: strand-vibes."],
+["Cerveja","bier","ser-VEI-zja","Pak licht, sneldrogend en neem een dun regenjack mee.","Teken de Braziliaanse vlag en hang hem op."],
+["Caipirinha","nationale cocktail","kai-pi-REEN-ja","Koop muggenspul met DEET of icaridine.","Maak er een: limoen, suiker, ijs (de gezonde versie zonder alcohol kan ook)."],
+["Saudade","verlangen, heimwee","sau-DA-dsje","Bel je bank: werkt je pas in het buitenland en wat kost dat?","Stuur iemand 'tenho saudade de você'."],
+["Praia","strand","PRAI-a","Zoek uit wat Pix is: Brazilianen betalen er alles mee.","Zet een foto van Copacabana als achtergrond op je telefoon."],
+["Quanto custa?","hoeveel kost het?","KWAN-to KOES-ta","Wissel niet op het vliegveld: de koers is daar meestal slecht.","Leer de basis samba-stap: heen en weer op het ritme."],
+["A conta, por favor","de rekening, alsjeblieft","a KON-ta poor fa-VOR","Regel een eSIM voor mobiele data.","Trek een felle kleur aan en roep 'bora!'."],
+["Desculpa","sorry","des-KOEL-pa","Download Portugees offline in je vertaal-app.","Knip confetti van gekleurd papier en gooi het."],
+["Não entendo","ik begrijp het niet","nãu en-TEN-doe","Houd WhatsApp klaar: heel Brazilië appt.","Doe een solo-dansje terwijl je kookt."],
+["Fala devagar","praat langzamer","FA-la de-va-GAR","Installeer Uber en 99, de lokale taxi-apps.","Praat een minuut zo ontspannen als een samba."],
+["Onde fica...?","waar is...?","ON-dsje FI-ka","Houd je telefoon in drukke menigtes uit het zicht.","Zoek een Braziliaans recept voor later."],
+["Banheiro","toilet","ban-JEI-roe","Boek de eerste nachten en bewaar het adres ook in het Portugees.","Draai je heupen: 20 keer links, 20 keer rechts."],
+["Delícia","heerlijk","de-LI-si-a","Stel een dagbudget in zodat je weet wat je per dag uitgeeft.","Maak brigadeiros: gecondenseerde melk, cacao, boter."],
+["Saideira","het laatste drankje","sai-DEI-ra","Zoek de route van het vliegveld naar je verblijf op.","Sluit je avond af met één laatste dansnummer: je saideira."],
+["Gostoso","lekker (bij eten)","gos-TO-zoe","Plan één dag zonder plan: spontaan is Braziliaans.","Zing met een vriend een refrein: jullie eigen bloco."],
+["Pão de queijo","kaasbroodje","pãu dsje KEI-zjoe","Zoek in jouw buurt waar je pão de queijo kunt proeven.","Bak of koop ze en eet ze warm."],
+["Açaí","açaí (paarse vruchtenbowl)","a-sa-IE","Brazilië gebruikt stopcontacten type N (vaak ook C): neem een adapter mee.","Maak een açaí-bowl met banaan en granola."],
+["Feijoada","bonenstoof met vlees","fei-ZJWA-da","Check of je laders tegen 127 en 220 volt kunnen (de meeste kunnen dat).","Teken je eigen carnavalskostuum."],
+["Brigadeiro","chocoladesnoepje","bri-ga-DEI-roe","Neem een kleine powerbank mee.","Plak glitter op je gezicht of nagels."],
+["Beleza","prima, mooi","be-LE-za","Pak een dagrugzak die goed dichtgaat.","Maak een moodboard: strand, feest, jungle."],
+["Valeu","bedankt (informeel)","va-LEU","Maak een back-up van je foto's en belangrijke bestanden.","Kijk een clip van een samba-school parade."],
+["Saúde","proost","sa-OE-dsje","Vraag je apotheek om een medicijnlijst in het Engels als je medicijnen gebruikt.","Proost met een vriend: 'saúde!' en een high five."],
+["Festa","feest","FES-ta","Maak een mini-reisapotheek: pleisters, paracetamol, middel tegen diarree.","Tik het ritme van een bateria na met twee pennen."],
+["Bloco","straat-carnavalsgroep","BLO-koe","Reserveer alvast activiteiten die snel vol zitten.","Maak een shaker van rijst in een bekertje."],
+["Fantasia","kostuum","fan-ta-ZI-a","Sla de noodnummers op: 190 politie, 192 ambulance, 193 brandweer.","Trek iets met veren of pailletten aan."],
+["Purpurina","glitter","poer-poe-RI-na","Pak zonnebrand met hoge factor in: de zon is hard.","Doe een dans-challenge met een vriend."],
+["Samba","samba","SAM-ba","Loop je schoenen alvast in, zeker als je veel gaat wandelen.","Dans 'Socadona' van Ludmilla."],
+["Bateria","drumsectie van een samba-school","ba-te-RI-a","Check de bagagevoorwaarden van je airline.","Zet je favoriete nummer hard en dans mee."],
+["Cuíca","wrijftrommel (die lachende geluidjes)","koe-I-ka","Zet betalen buiten Europa aan bij je bank en creditcard.","Maak een poster 'Brasil 2027' voor je muur."],
+["Mandou bem","goed gedaan","man-DOU bem","Maak een lijstje met eten dat je wilt proeven.","Zing mee met een Portugees refrein, ook al versta je het niet."],
+["Tá ligado?","snap je het?","ta li-GA-doe","Spreek een paar zinnen af met je reisgenoten en oefen ze.","Maak een moodboard in geel, roze en groen."],
+["Mina","meid (straattaal)","MI-na","Laat je thuisfront weten wat je route is en deel je vluchtgegevens.","Eet iets tropisch: mango, papaya of ananas."],
+["Cara","gast, man (straattaal)","KA-ra","Regel post, planten en huisdieren voor de dagen dat je weg bent.","Speel 'Bonde do Brunão' van Bruno Mars en zing luid mee."],
+["Rolê","uitje, rondje maken","hoh-LEH","Maak een inpaklijst en leg alvast spullen klaar.","Organiseer een mini-baile: 3 nummers, 3 vrienden."],
+["Bora!","kom, laten we gaan!","BO-ra","Check of je al online kunt inchecken.","Teken je eigen masker."],
+["Rebolar","je heupen draaien","he-bo-LAR","Zet boekingsbevestigingen en tickets in één map.","Doe 10 squats op funk."],
+["Descer","naar beneden dansen","de-SER","Bewaar je boekingen en verzekeringspas ook offline.","Dans zo laag als je kunt op één nummer."],
+["Pista","dansvloer","PIS-ta","Neem een klein bedrag cash mee voor de eerste dag.","Maak een cirkel van vrienden of kussens en dans erin."],
+["Calor","hitte","ka-LOR","Laad al je apparaten op en werk je offline kaarten bij.","Zet de verwarming op 22 en doe alsof het 35 graden is."],
+["Sol","zon","sol","Check het weerbericht voor je bestemming.","Dans met je zonnebril op."],
+["Protetor solar","zonnebrand","pro-te-TOR so-LAR","Pak je handbagage: lader, paspoort, medicijnen, lege bidon.","Ruik aan je zonnebrand en droom van de vakantie."],
+["Mochila","rugzak","mo-SJI-la","Check de vloeistofregels voor handbagage.","Zing de woorden van de afgelopen weken."],
+["Passaporte","paspoort","pas-sa-PORT-sje","Bepaal wanneer je naar het vliegveld vertrekt en hoe je er komt.","Zet 7 nummers op en dans 7 minuten."],
+["Aeroporto","vliegveld","a-e-ro-POR-to","Zet je wekker en regel vervoer naar het vliegveld.","Maak een foto van jezelf in je carnavalsoutfit."],
+["Embarque","boarding","em-BAR-kje","Eet de koelkast leeg en zet het afval buiten.","Roep 'embarque!' en trek je jas aan."],
+["Mala","koffer","MA-la","Weeg je koffer met een bagageweger.","Dans met je koffer door de kamer."],
+["Voo","vlucht","VOE","Check online in en bewaar je boardingpass op je telefoon.","Maak een groepsfoto met confetti."],
+["Chegada","aankomst","sje-GA-da","Pak je koffer in en leg je paspoort bovenop.","Zeg alle woorden van deze kalender hardop."],
+["Amanhã","morgen","a-man-JAN","Ga vroeg naar bed: je hebt een lange reis voor de boeg.","Gooi de laatste confetti en slaap als een king."],
+["Chegou o dia!","de dag is er!","sje-GOU oe DJI-a","Paspoort? Telefoon? Lader? Door naar het vliegveld!","Feest! Bem-vindo ao Brasil!"]
+  ];
+
+  var MOTIFS = [
+'<g stroke="var(--ink)" stroke-width="3"><g stroke="var(--b)" stroke-width="6" stroke-linecap="round"><path d="M50 6v12M50 82v12M6 50h12M82 50h12M19 19l8 8M73 73l8 8M81 19l-8 8M27 73l-8 8"/></g><circle cx="50" cy="50" r="24" fill="var(--a)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M50 32L36 6l14 10 14-10z" fill="var(--c)"/><ellipse cx="50" cy="64" rx="24" ry="30" fill="var(--a)"/><path d="M34 50l32 26M66 50L34 76M50 36v56" stroke="var(--b)" fill="none"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><ellipse cx="42" cy="62" rx="26" ry="30" fill="var(--ink)"/><circle cx="40" cy="38" r="15" fill="var(--ink)"/><ellipse cx="38" cy="68" rx="12" ry="17" fill="var(--b)"/><path d="M46 28h46c0 16-10 26-28 26H46z" fill="var(--a)"/><circle cx="40" cy="36" r="4" fill="var(--b)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><rect x="22" y="26" width="56" height="50" fill="var(--a)"/><ellipse cx="50" cy="76" rx="28" ry="9" fill="var(--a)"/><path d="M22 40l14 26 14-26 14 26 14-26" fill="none" stroke="var(--c)" stroke-width="4"/><ellipse cx="50" cy="26" rx="28" ry="9" fill="var(--b)"/><path d="M80 8L58 26M92 18L66 28" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M50 92C46 72 54 56 50 40" stroke-width="9" fill="none"/><path d="M50 40C30 22 14 28 8 40 26 36 40 40 50 40z" fill="var(--c)"/><path d="M50 40C70 22 86 28 92 40 74 36 60 40 50 40z" fill="var(--c)"/><path d="M50 40C40 16 54 6 64 4 58 20 56 30 50 40z" fill="var(--c)"/><circle cx="45" cy="45" r="5" fill="var(--a)"/><circle cx="56" cy="46" r="5" fill="var(--b)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><circle cx="50" cy="50" r="34" fill="var(--a)"/><path d="M50 34l14 10-5 16H41l-5-16z" fill="var(--ink)"/><path d="M50 34V18M64 44l16-6M59 60l10 14M41 60L31 74M36 44L20 38" fill="none"/></g>',
+'<g stroke="var(--ink)" stroke-width="3"><circle cx="50" cy="50" r="34" fill="var(--c)"/><circle cx="50" cy="50" r="27" fill="var(--b)"/><path d="M50 24v52M24 50h52M32 32l36 36M68 32L32 68" stroke="var(--c)" stroke-width="3"/><circle cx="50" cy="50" r="5" fill="var(--c)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M50 90L12 40C28 14 72 14 88 40z" fill="var(--a)"/><path d="M50 90L28 30M50 90V20M50 90L72 30" stroke="var(--b)" stroke-width="5" fill="none"/><circle cx="50" cy="90" r="6" fill="var(--c)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M10 40c14-14 66-14 80 0 0 26-14 36-26 24-6-6-22-6-28 0-12 12-26 2-26-24z" fill="var(--a)"/><ellipse cx="33" cy="48" rx="10" ry="6" fill="var(--ink)"/><ellipse cx="67" cy="48" rx="10" ry="6" fill="var(--ink)"/><path d="M10 40L4 18M90 40l6-22M50 28V10" stroke="var(--b)" stroke-width="5" stroke-linecap="round"/></g>',
+'<g stroke="var(--ink)" stroke-width="3"><circle cx="50" cy="50" r="34" fill="var(--a)"/><circle cx="50" cy="50" r="22" fill="var(--b)"/><g fill="var(--c)" stroke-width="2"><circle cx="50" cy="16" r="6"/><circle cx="84" cy="50" r="6"/><circle cx="50" cy="84" r="6"/><circle cx="16" cy="50" r="6"/></g></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><circle cx="78" cy="22" r="11" fill="var(--b)"/><path d="M4 88L30 40q10-14 22 0l10 16 12-8 20 40z" fill="var(--a)"/><path d="M8 30L92 44" stroke-width="2.5"/><rect x="46" y="34" width="14" height="10" fill="var(--c)" stroke-width="2"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M50 6l12 28 29 3-22 20 7 29-26-16-26 16 7-29L9 37l29-3z" fill="var(--a)"/><circle cx="14" cy="14" r="5" fill="var(--b)"/><rect x="80" y="8" width="10" height="10" fill="var(--c)"/><circle cx="88" cy="84" r="5" fill="var(--b)"/><rect x="8" y="80" width="10" height="10" fill="var(--c)"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><circle cx="50" cy="32" r="16" fill="var(--b)"/><path d="M4 58q12-12 23 0t23 0 23 0 23 0v34H4z" fill="var(--a)"/><path d="M4 74q12-12 23 0t23 0 23 0 23 0" stroke="var(--c)" stroke-width="4" fill="none"/></g>',
+'<g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"><path d="M50 4v20"/><circle cx="50" cy="56" r="32" fill="var(--a)"/><path d="M18 56h64M50 24v64M24 38q26 14 52 0M24 74q26-14 52 0" stroke="var(--b)" stroke-width="2.5" fill="none"/><path d="M84 12l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="var(--c)" stroke-width="2"/></g>'
+  ];
+
+  var SETS = [
+    { a: "#ff2d95", b: "#ffe600", c: "#00d26a", bg: "#2f6bff" },
+    { a: "#ffe600", b: "#ff2d95", c: "#00d26a", bg: "#ff7a1a" },
+    { a: "#00d26a", b: "#ffe600", c: "#2f6bff", bg: "#ff2d95" },
+    { a: "#ff7a1a", b: "#ffe600", c: "#00d26a", bg: "#2f6bff" },
+    { a: "#2f6bff", b: "#ffe600", c: "#ff2d95", bg: "#00d26a" }
+  ];
+
+  function svgFor(n) {
+    var m = MOTIFS[n % MOTIFS.length];
+    var s = SETS[n % SETS.length];
+    return '<svg viewBox="0 0 100 100" role="img" aria-hidden="true" style="--a:' + s.a + ';--b:' + s.b + ';--c:' + s.c + ';--ink:#12041f">' + m + '</svg>';
+  }
+  function bgFor(n) { return SETS[n % SETS.length].bg; }
+
+  function dateFor(n) {
+    var d = new Date(2027, 0, 11 - n);
+    return d.toLocaleDateString("nl-NL", { day: "numeric", month: "short" }).replace(".", "");
+  }
+  function dateLong(n) {
+    var d = new Date(2027, 0, 11 - n);
+    return d.toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long" });
+  }
+  function entry(n) { return DATA[TOTAL - n]; }
+
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var daysLeft = Math.round((TARGET - today) / 86400000);
+  var currentN = Math.max(0, Math.min(TOTAL, daysLeft));
+  var selected = currentN;
+  var spoilers = false;
+
+  var doneSet = {};
+  try { var raw = localStorage.getItem("brasil-done"); if (raw) doneSet = JSON.parse(raw) || {}; } catch (e) {}
+  function saveDone() { try { localStorage.setItem("brasil-done", JSON.stringify(doneSet)); } catch (e) {} }
+
+  function unlocked(n) { return spoilers || daysLeft <= n; }
+
+  /* ticker */
+  var words = ["BAILE", "CARNAVAL", "SAMBA", "FUNK", "BORA!", "BRASIL", "SAUDADE", "FESTA", "DESCER", "ROLÊ"];
+  var tk = "";
+  for (var r = 0; r < 4; r++) for (var i = 0; i < words.length; i++) tk += "<span>" + words[i] + " ✦</span>";
+  document.getElementById("ticker").innerHTML = tk;
+
+  /* hero */
+  var numEl = document.getElementById("countNum");
+  var labelEl = document.getElementById("countLabel");
+  var subEl = document.getElementById("countSub");
+  if (daysLeft > 0) {
+    numEl.textContent = daysLeft;
+    labelEl.firstChild.nodeValue = daysLeft === 1 ? "dag te gaan" : "dagen te gaan";
+    subEl.textContent = daysLeft > TOTAL ? "De kalender start op 17 november." : "Nog " + daysLeft + " keer slapen tot 11 januari.";
+  } else if (daysLeft === 0) {
+    numEl.textContent = "0";
+    labelEl.firstChild.nodeValue = "Vandaag is de dag!";
+    subEl.textContent = "Bom dia, Brasil.";
+  } else {
+    numEl.textContent = "🇧🇷";
+    labelEl.firstChild.nodeValue = "Je bent er!";
+    subEl.textContent = "De kalender staat open voor alle dagen.";
+  }
+
+  var bar = document.getElementById("bar");
+  var bh = "";
+  for (var k = TOTAL; k >= 0; k--) {
+    var cls = k === currentN && daysLeft <= TOTAL && daysLeft >= 0 ? "now" : (daysLeft < k ? "on" : "");
+    bh += '<i class="' + cls + '"></i>';
+  }
+  bar.innerHTML = bh;
+
+  /* day card */
+  var dayEl = document.getElementById("day");
+  var tagEl = document.getElementById("dayTag");
+  function renderDay() {
+    var n = selected;
+    var e = entry(n);
+    var isToday = n === currentN && daysLeft <= TOTAL && daysLeft >= 0;
+    tagEl.textContent = isToday ? "Vandaag" : "Dag " + (TOTAL - n + 1);
+    var head = '<div class="sticker" style="--b-bg:' + bgFor(n) + '">' + svgFor(n) + '</div>';
+    if (!unlocked(n)) {
+      dayEl.innerHTML = head + '<div class="locked"><div class="day-meta"><span class="chip">' + dateLong(n) + '</span><span class="chip alt">nog ' + n + ' dagen</span></div><div class="word">Nog even wachten</div><p class="nl">Deze dag gaat open op ' + dateLong(n) + '.</p><div class="actions"><button class="ghost" id="bk">Terug naar vandaag</button></div></div>';
+      var bk = document.getElementById("bk");
+      if (bk) bk.onclick = function () { selected = currentN; refresh(); };
+      return;
+    }
+    var done = !!doneSet[n];
+    dayEl.innerHTML = head +
+      '<div><div class="day-meta"><span class="chip">' + dateLong(n) + '</span><span class="chip alt">' + (n === 0 ? "dia D" : "nog " + n + " dagen") + '</span></div>' +
+      '<div class="word">' + e[0] + '</div>' +
+      '<div class="nl">' + e[1] + '</div>' +
+      '<div class="say">Uitspraak: ' + e[2] + '</div>' +
+      '<div class="boxes"><div class="box"><h3>Voorbereidingstip</h3><p>' + e[3] + '</p></div>' +
+      '<div class="box fest"><h3>Carnavalsmoment</h3><p>' + e[4] + '</p></div></div>' +
+      '<div class="actions"><button id="doneBtn" class="' + (done ? "done" : "") + '" aria-pressed="' + done + '">' + (done ? "Gedaan ✓" : "Ik heb het gedaan") + '</button>' +
+      '<button class="ghost" id="prevBtn">Vorige</button><button class="ghost" id="nextBtn">Volgende</button></div></div>';
+    document.getElementById("doneBtn").onclick = function () {
+      if (doneSet[n]) delete doneSet[n]; else { doneSet[n] = 1; burst(); }
+      saveDone(); refresh();
+    };
+    document.getElementById("prevBtn").onclick = function () { selected = Math.min(TOTAL, n + 1); refresh(); };
+    document.getElementById("nextBtn").onclick = function () { selected = Math.max(0, n - 1); refresh(); };
+  }
+
+  /* grid */
+  var gridEl = document.getElementById("grid");
+  function renderGrid() {
+    var h = "";
+    for (var n = TOTAL; n >= 0; n--) {
+      var e = entry(n);
+      var isToday = n === currentN && daysLeft <= TOTAL && daysLeft >= 0;
+      var past = daysLeft < n && !isToday;
+      var cls = "tile" + (isToday ? " today" : past ? " past" : " future") + (past && doneSet[n] ? " ok" : "") + (n === selected ? " sel" : "");
+      var open = unlocked(n);
+      h += '<button class="' + cls + '" data-n="' + n + '" aria-label="Dag ' + (TOTAL - n + 1) + ', ' + dateFor(n) + '">' +
+        '<span class="mini">' + svgFor(n) + '</span>' +
+        '<div class="n">' + n + '</div><div class="d">' + dateFor(n) + '</div>' +
+        '<div class="w">' + (open ? e[0] : "???") + '</div>' +
+        (past && doneSet[n] ? '<span class="stamp">GEDAAN</span>' : "") + '</button>';
+    }
+    gridEl.innerHTML = h;
+    var tiles = gridEl.querySelectorAll(".tile");
+    for (var t = 0; t < tiles.length; t++) {
+      tiles[t].onclick = function () {
+        selected = parseInt(this.getAttribute("data-n"), 10);
+        refresh();
+        document.getElementById("dayTitle").scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+    }
+  }
+
+  function refresh() { renderDay(); renderGrid(); }
+
+  document.getElementById("spoil").onchange = function () { spoilers = this.checked; refresh(); };
+
+  /* confetti */
+  var cv = document.getElementById("confetti");
+  var ctx = cv.getContext("2d");
+  var parts = [];
+  var running = false;
+  function size() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+  window.addEventListener("resize", size); size();
+  function burst() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cols = ["#ff2d95", "#ffe600", "#00d26a", "#2f6bff", "#ff7a1a", "#fff6e8"];
+    for (var i = 0; i < 120; i++) {
+      parts.push({ x: cv.width / 2, y: cv.height * 0.55, vx: (Math.random() - .5) * 16, vy: -Math.random() * 16 - 4, s: Math.random() * 8 + 4, c: cols[i % cols.length], r: Math.random() * 6, vr: (Math.random() - .5) * .4, life: 90 + Math.random() * 40 });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += .45; p.vx *= .99; p.r += p.vr; p.life--;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+      if (p.life <= 0 || p.y > cv.height + 20) parts.splice(i, 1);
+    }
+    if (parts.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  refresh();
+})();
+</script>
+</body>
+</html>
