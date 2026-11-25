@@ -70,13 +70,17 @@ h2 .tag { background: var(--pink); color: var(--ink); padding: 2px 10px; display
 .day-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
 .chip { font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; background: var(--green); color: var(--ink); padding: 4px 10px; text-transform: uppercase; }
 .chip.alt { background: var(--text); }
-.word { font-family: var(--font-display); font-size: clamp(36px, 8vw, 72px); line-height: 1; margin: 4px 0; color: var(--yellow); text-wrap: balance; overflow-wrap: anywhere; }
+.word { font-family: var(--font-display); font-size: clamp(30px, 6.5vw, 56px); line-height: 1.05; margin: 4px 0; color: var(--yellow); text-wrap: balance; overflow-wrap: anywhere; }
 .nl { font-size: 22px; font-weight: 700; }
 .say { color: var(--muted); font-size: 15px; margin-top: 2px; }
 .boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
 .box { border: 3px solid var(--text); padding: 12px 14px; background: var(--paper); }
 .box h3 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 400; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--pink); }
 .box.fest h3 { color: var(--orange); }
+.example { margin-top: 16px; border-left: 8px solid var(--green); background: var(--paper); padding: 12px 16px; }
+.example h3 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 400; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--green); }
+.example .pt { font-size: 22px; font-weight: 800; margin: 0; }
+.example .tr { margin: 2px 0 0; color: var(--muted); font-size: 16px; }
 .box p { margin: 0; font-size: 17px; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
 button, .btn { font-family: var(--font-display); font-size: 15px; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; border: 3px solid var(--ink); background: var(--yellow); color: var(--ink); padding: 10px 16px; box-shadow: 4px 4px 0 var(--pink); text-decoration: none; display: inline-block; }
@@ -183,7 +187,7 @@ footer { margin: 50px 0 40px; color: var(--muted); font-size: 14px; }
     <div class="grid" id="grid"></div>
   </section>
 
-  <footer>Elke dag een Portugees woord, een voorbereidingstip en een carnavalsmoment. Check altijd zelf de officiële reisregels en vaccinatie-eisen voor je vertrek.</footer>
+  <footer>Elke dag een Portugese zin of uitdrukking, een voorbereidingstip en een carnavalsmoment. Check altijd zelf de officiële reisregels en vaccinatie-eisen voor je vertrek.</footer>
 </div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 
@@ -193,64 +197,64 @@ footer { margin: 50px 0 40px; color: var(--muted); font-size: 14px; }
   var TARGET = new Date(2027, 0, 11);
 
   /* N = dagen tot 11 januari, van 55 tot 0.
-     [portugees, nederlands, uitspraak, voorbereidingstip, carnavalsmoment] */
+     [portugees, nederlands, uitspraak, voorbereidingstip, carnavalsmoment, voorbeeldzin, vertaling] */
   var DATA = [
-["Oi","hoi","oi","Controleer je paspoort: geldig en niet bijna verlopen.","Trek vandaag iets geels, groens of blauws aan."],
-["Obrigado / Obrigada","dank je (man / vrouw)","oh-bree-GAH-doe / -da","Lees het actuele reisadvies op nederlandwereldwijd.nl.","Zet 'Funk Rave' van Anitta op en bounce een minuut."],
-["Por favor","alsjeblieft","poor fa-VOR","Plan een afspraak voor reisvaccinaties en vraag welke bij jouw route horen.","Zeg vandaag één keer 'obrigado' en lach erbij."],
-["Bom dia","goedemorgen","bom DJEE-a","Check of je reis- en annuleringsverzekering klopt.","Start je dag met een Braziliaans nummer."],
-["Boa noite","goedenavond","BO-a NOI-tsje","Maak een foto van je paspoort en mail die naar jezelf.","Doe het licht uit, zet muziek aan en dans solo."],
-["Tudo bem?","alles goed?","TOE-doe bem","Download offline kaarten van je bestemming.","Maak een playlist met 5 nummers: je baile-warming-up."],
-["Água","water","AH-gwa","Zoek op wat het weer in januari is: het is zomer, met tropische buien.","Drink water met ijs en limoen: strand-vibes."],
-["Cerveja","bier","ser-VEI-zja","Pak licht, sneldrogend en neem een dun regenjack mee.","Teken de Braziliaanse vlag en hang hem op."],
-["Caipirinha","nationale cocktail","kai-pi-REEN-ja","Koop muggenspul met DEET of icaridine.","Maak er een: limoen, suiker, ijs (de gezonde versie zonder alcohol kan ook)."],
-["Saudade","verlangen, heimwee","sau-DA-dsje","Bel je bank: werkt je pas in het buitenland en wat kost dat?","Stuur iemand 'tenho saudade de você'."],
-["Praia","strand","PRAI-a","Zoek uit wat Pix is: Brazilianen betalen er alles mee.","Zet een foto van Copacabana als achtergrond op je telefoon."],
-["Quanto custa?","hoeveel kost het?","KWAN-to KOES-ta","Wissel niet op het vliegveld: de koers is daar meestal slecht.","Leer de basis samba-stap: heen en weer op het ritme."],
-["A conta, por favor","de rekening, alsjeblieft","a KON-ta poor fa-VOR","Regel een eSIM voor mobiele data.","Trek een felle kleur aan en roep 'bora!'."],
-["Desculpa","sorry","des-KOEL-pa","Download Portugees offline in je vertaal-app.","Knip confetti van gekleurd papier en gooi het."],
-["Não entendo","ik begrijp het niet","nãu en-TEN-doe","Houd WhatsApp klaar: heel Brazilië appt.","Doe een solo-dansje terwijl je kookt."],
-["Fala devagar","praat langzamer","FA-la de-va-GAR","Installeer Uber en 99, de lokale taxi-apps.","Praat een minuut zo ontspannen als een samba."],
-["Onde fica...?","waar is...?","ON-dsje FI-ka","Houd je telefoon in drukke menigtes uit het zicht.","Zoek een Braziliaans recept voor later."],
-["Banheiro","toilet","ban-JEI-roe","Boek de eerste nachten en bewaar het adres ook in het Portugees.","Draai je heupen: 20 keer links, 20 keer rechts."],
-["Delícia","heerlijk","de-LI-si-a","Stel een dagbudget in zodat je weet wat je per dag uitgeeft.","Maak brigadeiros: gecondenseerde melk, cacao, boter."],
-["Saideira","het laatste drankje","sai-DEI-ra","Zoek de route van het vliegveld naar je verblijf op.","Sluit je avond af met één laatste dansnummer: je saideira."],
-["Gostoso","lekker (bij eten)","gos-TO-zoe","Plan één dag zonder plan: spontaan is Braziliaans.","Zing met een vriend een refrein: jullie eigen bloco."],
-["Pão de queijo","kaasbroodje","pãu dsje KEI-zjoe","Zoek in jouw buurt waar je pão de queijo kunt proeven.","Bak of koop ze en eet ze warm."],
-["Açaí","açaí (paarse vruchtenbowl)","a-sa-IE","Brazilië gebruikt stopcontacten type N (vaak ook C): neem een adapter mee.","Maak een açaí-bowl met banaan en granola."],
-["Feijoada","bonenstoof met vlees","fei-ZJWA-da","Check of je laders tegen 127 en 220 volt kunnen (de meeste kunnen dat).","Teken je eigen carnavalskostuum."],
-["Brigadeiro","chocoladesnoepje","bri-ga-DEI-roe","Neem een kleine powerbank mee.","Plak glitter op je gezicht of nagels."],
-["Beleza","prima, mooi","be-LE-za","Pak een dagrugzak die goed dichtgaat.","Maak een moodboard: strand, feest, jungle."],
-["Valeu","bedankt (informeel)","va-LEU","Maak een back-up van je foto's en belangrijke bestanden.","Kijk een clip van een samba-school parade."],
-["Saúde","proost","sa-OE-dsje","Vraag je apotheek om een medicijnlijst in het Engels als je medicijnen gebruikt.","Proost met een vriend: 'saúde!' en een high five."],
-["Festa","feest","FES-ta","Maak een mini-reisapotheek: pleisters, paracetamol, middel tegen diarree.","Tik het ritme van een bateria na met twee pennen."],
-["Bloco","straat-carnavalsgroep","BLO-koe","Reserveer alvast activiteiten die snel vol zitten.","Maak een shaker van rijst in een bekertje."],
-["Fantasia","kostuum","fan-ta-ZI-a","Sla de noodnummers op: 190 politie, 192 ambulance, 193 brandweer.","Trek iets met veren of pailletten aan."],
-["Purpurina","glitter","poer-poe-RI-na","Pak zonnebrand met hoge factor in: de zon is hard.","Doe een dans-challenge met een vriend."],
-["Samba","samba","SAM-ba","Loop je schoenen alvast in, zeker als je veel gaat wandelen.","Dans 'Socadona' van Ludmilla."],
-["Bateria","drumsectie van een samba-school","ba-te-RI-a","Check de bagagevoorwaarden van je airline.","Zet je favoriete nummer hard en dans mee."],
-["Cuíca","wrijftrommel (die lachende geluidjes)","koe-I-ka","Zet betalen buiten Europa aan bij je bank en creditcard.","Maak een poster 'Brasil 2027' voor je muur."],
-["Mandou bem","goed gedaan","man-DOU bem","Maak een lijstje met eten dat je wilt proeven.","Zing mee met een Portugees refrein, ook al versta je het niet."],
-["Tá ligado?","snap je het?","ta li-GA-doe","Spreek een paar zinnen af met je reisgenoten en oefen ze.","Maak een moodboard in geel, roze en groen."],
-["Mina","meid (straattaal)","MI-na","Laat je thuisfront weten wat je route is en deel je vluchtgegevens.","Eet iets tropisch: mango, papaya of ananas."],
-["Cara","gast, man (straattaal)","KA-ra","Regel post, planten en huisdieren voor de dagen dat je weg bent.","Speel 'Bonde do Brunão' van Bruno Mars en zing luid mee."],
-["Rolê","uitje, rondje maken","hoh-LEH","Maak een inpaklijst en leg alvast spullen klaar.","Organiseer een mini-baile: 3 nummers, 3 vrienden."],
-["Bora!","kom, laten we gaan!","BO-ra","Check of je al online kunt inchecken.","Teken je eigen masker."],
-["Rebolar","je heupen draaien","he-bo-LAR","Zet boekingsbevestigingen en tickets in één map.","Doe 10 squats op funk."],
-["Descer","naar beneden dansen","de-SER","Bewaar je boekingen en verzekeringspas ook offline.","Dans zo laag als je kunt op één nummer."],
-["Pista","dansvloer","PIS-ta","Neem een klein bedrag cash mee voor de eerste dag.","Maak een cirkel van vrienden of kussens en dans erin."],
-["Calor","hitte","ka-LOR","Laad al je apparaten op en werk je offline kaarten bij.","Zet de verwarming op 22 en doe alsof het 35 graden is."],
-["Sol","zon","sol","Check het weerbericht voor je bestemming.","Dans met je zonnebril op."],
-["Protetor solar","zonnebrand","pro-te-TOR so-LAR","Pak je handbagage: lader, paspoort, medicijnen, lege bidon.","Ruik aan je zonnebrand en droom van de vakantie."],
-["Mochila","rugzak","mo-SJI-la","Check de vloeistofregels voor handbagage.","Zing de woorden van de afgelopen weken."],
-["Passaporte","paspoort","pas-sa-PORT-sje","Bepaal wanneer je naar het vliegveld vertrekt en hoe je er komt.","Zet 7 nummers op en dans 7 minuten."],
-["Aeroporto","vliegveld","a-e-ro-POR-to","Zet je wekker en regel vervoer naar het vliegveld.","Maak een foto van jezelf in je carnavalsoutfit."],
-["Embarque","boarding","em-BAR-kje","Eet de koelkast leeg en zet het afval buiten.","Roep 'embarque!' en trek je jas aan."],
-["Mala","koffer","MA-la","Weeg je koffer met een bagageweger.","Dans met je koffer door de kamer."],
-["Voo","vlucht","VOE","Check online in en bewaar je boardingpass op je telefoon.","Maak een groepsfoto met confetti."],
-["Chegada","aankomst","sje-GA-da","Pak je koffer in en leg je paspoort bovenop.","Zeg alle woorden van deze kalender hardop."],
-["Amanhã","morgen","a-man-JAN","Ga vroeg naar bed: je hebt een lange reis voor de boeg.","Gooi de laatste confetti en slaap als een king."],
-["Chegou o dia!","de dag is er!","sje-GOU oe DJI-a","Paspoort? Telefoon? Lader? Door naar het vliegveld!","Feest! Bem-vindo ao Brasil!"]
+  ["Eu queria...","ik wil graag... (beleefd)","eu ke-REE-a","Controleer je paspoort: geldig en niet bijna verlopen.","Trek vandaag iets geels, groens of blauws aan.","Eu queria um café, por favor.","Ik wil graag een koffie, alsjeblieft."],
+  ["Você poderia repetir?","zou je dat kunnen herhalen?","vo-SEH po-de-REE-a he-pe-TSJIR","Lees het actuele reisadvies op nederlandwereldwijd.nl.","Zet 'Funk Rave' van Anitta op en bounce een minuut.","Desculpa, você poderia repetir mais devagar?","Sorry, kun je het langzamer herhalen?"],
+  ["Estou aprendendo","ik ben aan het leren","es-TOU a-pren-DEN-doe","Plan een afspraak voor reisvaccinaties en vraag welke bij jouw route horen.","Zeg vandaag één keer 'obrigado' en lach erbij.","Eu não falo muito bem, mas estou aprendendo.","Ik spreek het niet zo goed, maar ik leer het."],
+  ["Eu vou viajar","ik ga reizen (vou + infinitief)","eu VOU vi-a-ZJAR","Check of je reis- en annuleringsverzekering klopt.","Start je dag met een Braziliaans nummer.","Em janeiro eu vou viajar para o Brasil.","In januari ga ik naar Brazilië reizen."],
+  ["Fazer uma reserva","een reservering maken","fa-ZER OE-ma he-ZER-va","Maak een foto van je paspoort en mail die naar jezelf.","Doe het licht uit, zet muziek aan en dans solo.","Eu fiz uma reserva em nome de Silva.","Ik heb een reservering op naam van Silva gemaakt."],
+  ["Tem...?","is er...? (letterlijk: heeft...)","teng","Download offline kaarten van je bestemming.","Maak een playlist met 5 nummers: je baile-warming-up.","Tem quarto livre para esta noite?","Is er een kamer vrij voor vanavond?"],
+  ["Dá para...?","kan het / lukt het...?","DA PA-ra","Zoek op wat het weer in januari is: het is zomer, met tropische buien.","Drink water met ijs en limoen: strand-vibes.","Dá para pagar com cartão?","Kan ik met de kaart betalen?"],
+  ["Vocês aceitam Pix?","nemen jullie Pix aan?","vo-SEZ a-SEI-tam PIKS","Pak licht, sneldrogend en neem een dun regenjack mee.","Teken de Braziliaanse vlag en hang hem op.","Não tenho dinheiro. Vocês aceitam Pix?","Ik heb geen cash. Nemen jullie Pix aan?"],
+  ["Estar com saudade de","iemand of iets missen","es-TAR kom sau-DA-dsje dsje","Koop muggenspul met DEET of icaridine.","Maak er een: limoen, suiker, ijs (de gezonde versie zonder alcohol kan ook).","Estou com saudade da minha família.","Ik mis mijn familie."],
+  ["Acabar de + infinitief","net iets gedaan hebben","a-ka-BAR dsje","Bel je bank: werkt je pas in het buitenland en wat kost dat?","Stuur iemand 'tenho saudade de você'.","Acabei de chegar no hotel.","Ik ben net in het hotel aangekomen."],
+  ["Ainda não","nog niet","a-IN-da nãu","Zoek uit wat Pix is: Brazilianen betalen er alles mee.","Zet een foto van Copacabana als achtergrond op je telefoon.","Ainda não comi nada hoje.","Ik heb vandaag nog niets gegeten."],
+  ["Já + voltooid tijd","al / ooit","zja","Wissel niet op het vliegveld: de koers is daar meestal slecht.","Leer de basis samba-stap: heen en weer op het ritme.","Você já foi ao Rio de Janeiro?","Ben je al eens in Rio de Janeiro geweest?"],
+  ["Fazer questão de","ergens op staan","fa-ZER kes-TÃU dsje","Regel een eSIM voor mobiele data.","Trek een felle kleur aan en roep 'bora!'.","Eu faço questão de pagar a conta.","Ik sta erop de rekening te betalen."],
+  ["Tomara que + conjuntivo","hopelijk","to-MA-ra kje","Download Portugees offline in je vertaal-app.","Knip confetti van gekleurd papier en gooi het.","Tomara que faça sol amanhã.","Hopelijk is het morgen zonnig."],
+  ["Pode ser","kan zijn / goed","PO-dsje SER","Houd WhatsApp klaar: heel Brazilië appt.","Doe een solo-dansje terwijl je kookt.","Pode ser às oito, na praça?","Zullen we om acht uur doen, op het plein?"],
+  ["Combinado!","afgesproken!","kom-bi-NA-doe","Installeer Uber en 99, de lokale taxi-apps.","Praat een minuut zo ontspannen als een samba.","Às oito na praia. Combinado!","Om acht uur op het strand. Afgesproken!"],
+  ["Demorar","duren","de-mo-RAR","Houd je telefoon in drukke menigtes uit het zicht.","Zoek een Braziliaans recept voor later.","Quanto tempo demora até o aeroporto?","Hoe lang duurt het tot het vliegveld?"],
+  ["Dar um jeito","iets regelen, een oplossing vinden","dar oem ZJEI-toe","Boek de eerste nachten en bewaar het adres ook in het Portugees.","Draai je heupen: 20 keer links, 20 keer rechts.","Não se preocupa, a gente dá um jeito.","Maak je geen zorgen, we regelen het wel."],
+  ["Fica a dica","tip voor jou","FI-ka a DJI-ka","Stel een dagbudget in zodat je weet wat je per dag uitgeeft.","Maak brigadeiros: gecondenseerde melk, cacao, boter.","Leva protetor solar. Fica a dica!","Neem zonnebrand mee. Tip van mij!"],
+  ["Cadê...?","waar is...? (informeel)","ka-DEH","Zoek de route van het vliegveld naar je verblijf op.","Sluit je avond af met één laatste dansnummer: je saideira.","Cadê meu celular? Estava aqui!","Waar is mijn telefoon? Hij lag hier!"],
+  ["Perder o voo","je vlucht missen","per-DER oe VOE","Plan één dag zonder plan: spontaan is Braziliaans.","Zing met een vriend een refrein: jullie eigen bloco.","Perdi meu voo. O que eu faço?","Ik heb mijn vlucht gemist. Wat moet ik doen?"],
+  ["Morrer de fome","omkomen van de honger","mo-HER dsje FO-mi","Zoek in jouw buurt waar je pão de queijo kunt proeven.","Bak of koop ze en eet ze warm.","Estou morrendo de fome!","Ik rammel van de honger!"],
+  ["Com certeza","zeker weten","kom ser-TE-za","Brazilië gebruikt stopcontacten type N (vaak ook C): neem een adapter mee.","Maak een açaí-bowl met banaan en granola.","Você vem? Com certeza!","Kom je? Zeker weten!"],
+  ["Sem problema","geen probleem","sem pro-BLE-ma","Check of je laders tegen 127 en 220 volt kunnen (de meeste kunnen dat).","Teken je eigen carnavalskostuum.","Posso sentar aqui? Sem problema.","Mag ik hier zitten? Geen probleem."],
+  ["Não tem de quê","graag gedaan","nãu teng dsje KEH","Neem een kleine powerbank mee.","Plak glitter op je gezicht of nagels.","Obrigado pela ajuda! Não tem de quê.","Bedankt voor de hulp! Graag gedaan."],
+  ["Muito prazer","aangenaam","MOEI-toe pra-ZER","Pak een dagrugzak die goed dichtgaat.","Maak een moodboard: strand, feest, jungle.","Muito prazer, eu sou da Holanda.","Aangenaam, ik kom uit Nederland."],
+  ["De onde você é?","waar kom je vandaan?","dsji ON-dsji vo-SEH EH","Maak een back-up van je foto's en belangrijke bestanden.","Kijk een clip van een samba-school parade.","De onde você é? Eu sou de Amsterdã.","Waar kom je vandaan? Ik kom uit Amsterdam."],
+  ["Faz tempo que","het is al een tijd dat","fas TEM-po kje","Vraag je apotheek om een medicijnlijst in het Engels als je medicijnen gebruikt.","Proost met een vriend: 'saúde!' en een high five.","Faz tempo que eu estudo português.","Ik leer al een tijdje Portugees."],
+  ["Vamos nessa?","zullen we gaan?","VA-moes NES-sa","Maak een mini-reisapotheek: pleisters, paracetamol, middel tegen diarree.","Tik het ritme van een bateria na met twee pennen.","A festa começou. Vamos nessa?","Het feest is begonnen. Zullen we gaan?"],
+  ["Tô","ik ben (gesproken, van estou)","toh","Reserveer alvast activiteiten die snel vol zitten.","Maak een shaker van rijst in een bekertje.","Tô cansado, mas tô feliz.","Ik ben moe, maar ik ben blij."],
+  ["Pra","naar / voor (gesproken, van para)","pra","Sla de noodnummers op: 190 politie, 192 ambulance, 193 brandweer.","Trek iets met veren of pailletten aan.","Vou pra praia, quer vir?","Ik ga naar het strand, wil je mee?"],
+  ["Né?","toch? (hè?)","neh","Pak zonnebrand met hoge factor in: de zon is hard.","Doe een dans-challenge met een vriend.","Hoje está calor, né?","Het is vandaag warm, hè?"],
+  ["Tipo","zoiets als, zeg maar","TSJI-po","Loop je schoenen alvast in, zeker als je veel gaat wandelen.","Dans 'Socadona' van Ludmilla.","É tipo um bolo, mas feito de queijo.","Het is zoiets als een cake, maar van kaas."],
+  ["Nossa!","wauw! (letterlijk: onze)","NO-sa","Check de bagagevoorwaarden van je airline.","Zet je favoriete nummer hard en dans mee.","Nossa, que bonito!","Wauw, wat mooi!"],
+  ["Tá bom","oké, goed","ta bom","Zet betalen buiten Europa aan bij je bank en creditcard.","Maak een poster 'Brasil 2027' voor je muur.","Às nove? Tá bom.","Om negen uur? Oké."],
+  ["Maneiro","gaaf, vet","ma-NEI-roe","Maak een lijstje met eten dat je wilt proeven.","Zing mee met een Portugees refrein, ook al versta je het niet.","Que show maneiro!","Wat een gaaf concert!"],
+  ["Massa","gaaf, top","MAS-sa","Spreek een paar zinnen af met je reisgenoten en oefen ze.","Maak een moodboard in geel, roze en groen.","Esse bloco é massa!","Deze bloco is top!"],
+  ["Curtir","genieten van, leuk vinden","koer-TSJIR","Laat je thuisfront weten wat je route is en deel je vluchtgegevens.","Eet iets tropisch: mango, papaya of ananas.","Eu curti muito a festa.","Ik vond het feest echt leuk."],
+  ["Ficar","blijven, worden, afspreken","fi-KAR","Regel post, planten en huisdieren voor de dagen dat je weg bent.","Speel 'Bonde do Brunão' van Bruno Mars en zing luid mee.","Vamos ficar até o fim da festa.","We blijven tot het einde van het feest."],
+  ["Rolar","gebeuren (straattaal)","ho-LAR","Maak een inpaklijst en leg alvast spullen klaar.","Organiseer een mini-baile: 3 nummers, 3 vrienden.","O que rolou ontem à noite?","Wat is er gisteravond gebeurd?"],
+  ["Zoar","gekscheren","zo-AR","Check of je al online kunt inchecken.","Teken je eigen masker.","Calma, eu só tô zoando.","Rustig, ik maak maar een grapje."],
+  ["A gente","wij (informeel)","a ZJEN-tsji","Zet boekingsbevestigingen en tickets in één map.","Doe 10 squats op funk.","A gente vai sair hoje à noite.","Wij gaan vanavond uit."],
+  ["Tá tudo certo","alles is in orde","ta TOE-doe SER-toe","Bewaar je boekingen en verzekeringspas ook offline.","Dans zo laag als je kunt op één nummer.","Reserva feita, tá tudo certo.","Reservering gedaan, alles is in orde."],
+  ["Mandar bem","het goed doen, knallen","man-DAR beng","Neem een klein bedrag cash mee voor de eerste dag.","Maak een cirkel van vrienden of kussens en dans erin.","Você mandou bem na dança!","Je deed het geweldig met dansen!"],
+  ["Estar de boa","relaxed zijn","es-TAR dsji BO-a","Laad al je apparaten op en werk je offline kaarten bij.","Zet de verwarming op 22 en doe alsof het 35 graden is.","Pode ir, eu tô de boa.","Ga maar, ik zit lekker."],
+  ["Pegar","pakken, nemen","pe-GAR","Check het weerbericht voor je bestemming.","Dans met je zonnebril op.","Vamos pegar um Uber até o hotel.","Laten we een Uber naar het hotel nemen."],
+  ["Embarcar","aan boord gaan","em-bar-KAR","Pak je handbagage: lader, paspoort, medicijnen, lege bidon.","Ruik aan je zonnebrand en droom van de vakantie.","O embarque é no portão doze.","Boarding is bij gate twaalf."],
+  ["Chegar atrasado","te laat komen","she-GAR a-tra-ZA-doe","Check de vloeistofregels voor handbagage.","Zing de woorden van de afgelopen weken.","Cheguei atrasado por causa do trânsito.","Ik kwam te laat door het verkeer."],
+  ["Ter que","moeten","ter kje","Bepaal wanneer je naar het vliegveld vertrekt en hoe je er komt.","Zet 7 nummers op en dans 7 minuten.","Eu tenho que acordar cedo amanhã.","Ik moet morgen vroeg opstaan."],
+  ["Precisar de","nodig hebben","pre-si-ZAR dsji","Zet je wekker en regel vervoer naar het vliegveld.","Maak een foto van jezelf in je carnavalsoutfit.","Eu preciso de um adaptador de tomada.","Ik heb een stekkeradapter nodig."],
+  ["Esquecer","vergeten","es-ke-SER","Eet de koelkast leeg en zet het afval buiten.","Roep 'embarque!' en trek je jas aan.","Não esqueci o passaporte, tá aqui!","Ik ben mijn paspoort niet vergeten, hier is hij!"],
+  ["Caber","passen (in)","ka-BER","Weeg je koffer met een bagageweger.","Dans met je koffer door de kamer.","Será que tudo isso cabe na mala?","Zou dit allemaal in de koffer passen?"],
+  ["Deixa que eu levo","laat mij maar dragen","DEI-sja kje eu LE-voe","Check online in en bewaar je boardingpass op je telefoon.","Maak een groepsfoto met confetti.","Deixa que eu levo a sua mala.","Laat mij je koffer maar dragen."],
+  ["Vai dar tudo certo","het komt goed","vai dar TOE-doe SER-toe","Pak je koffer in en leg je paspoort bovenop.","Zeg alle woorden van deze kalender hardop.","Relaxa, vai dar tudo certo.","Relax, het komt goed."],
+  ["Boa viagem!","goede reis!","BO-a vi-A-zjeng","Ga vroeg naar bed: je hebt een lange reis voor de boeg.","Gooi de laatste confetti en slaap als een king.","Boa viagem e aproveita bastante!","Goede reis en geniet ervan!"],
+  ["Estou chegando!","ik ben er bijna!","es-TOU she-GAN-doe","Paspoort? Telefoon? Lader? Door naar het vliegveld!","Feest! Bem-vindo ao Brasil!","Estou chegando, Brasil!","Ik ben er bijna, Brazilië!"]
   ];
 
   var MOTIFS = [
@@ -357,10 +361,11 @@ footer { margin: 50px 0 40px; color: var(--muted); font-size: 14px; }
     }
     var done = !!doneSet[n];
     dayEl.innerHTML = head +
-      '<div><div class="day-meta"><span class="chip">' + dateLong(n) + '</span><span class="chip alt">' + (n === 0 ? "dia D" : "nog " + n + " dagen") + '</span></div>' +
+      '<div><div class="day-meta"><span class="chip">' + dateLong(n) + '</span><span class="chip alt">' + (n === 0 ? "dia D" : "nog " + n + " dagen") + '</span><span class="chip" style="background:var(--pink)">niveau ' + (n >= 30 ? "A2" : "B1") + '</span></div>' +
       '<div class="word">' + e[0] + '</div>' +
       '<div class="nl">' + e[1] + '</div>' +
       '<div class="say">Uitspraak: ' + e[2] + '</div>' +
+      '<div class="example"><h3>Zin van de dag</h3><p class="pt">' + e[5] + '</p><p class="tr">' + e[6] + '</p></div>' +
       '<div class="boxes"><div class="box"><h3>Voorbereidingstip</h3><p>' + e[3] + '</p></div>' +
       '<div class="box fest"><h3>Carnavalsmoment</h3><p>' + e[4] + '</p></div></div>' +
       '<div class="actions"><button id="doneBtn" class="' + (done ? "done" : "") + '" aria-pressed="' + done + '">' + (done ? "Gedaan ✓" : "Ik heb het gedaan") + '</button>' +
